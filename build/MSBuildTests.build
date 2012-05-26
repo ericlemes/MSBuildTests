@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">	
+	<PropertyGroup>
+		<TextToSay>This is a property</TextToSay>	
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<Binaries Include="$(MSBuildProjectDirectory)\..\MSBuildTests\**\*.dll" />
+	</ItemGroup>
+	
+	<UsingTask TaskName="GenerateDumbFiles" AssemblyFile="$(MSBuildProjectDirectory)\..\MSBuildTests\MSBuildTests.Tasks\bin\Debug\MSBuildTests.Tasks.dll" />
+
+	<Target Name="SaySomething">
+		<Message Text="$(TextToSay)" />
+	</Target>
+	
+	<Target Name="Build">
+		<Delete Files="@(Binaries)" />
+		<MSBuild Projects="$(MSBuildProjectDirectory)\..\MSBuildTests\MSBuildTests.sln" />
+		<MakeDir Directories="$(MSBuildProjectDirectory)\..\dumbfiles" />
+		<GenerateDumbFiles Directory="$(MSBuildProjectDirectory)\..\dumbfiles" Prefix="DumbFile" Count="100" />
+	</Target>
+	
+	<Target Name="TransformLog">
+		<XslTransformation XmlInputPaths="$(MSBuildProjectDirectory)\msbuild-output.xml" XslInputPath="$(MSBuildProjectDirectory)\msbuild.xsl" OutputPaths="$(MSBuildProjectDirectory)\log.html" />
+	</Target>
+</Project>
